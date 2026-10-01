@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klik 10 Kali Dapat Hadiah!</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #74ebe5 0%, #4a00e0 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      z-index: 10;
+      transition: transform 0.3s ease;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 25px;
+      font-size: 16px;
+    }
+
+    .click-btn {
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+      color: white;
+      border: none;
+      padding: 15px 35px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
+      transition: all 0.2s ease;
+      outline: none;
+      user-select: none;
+    }
+
+    .click-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 65, 108, 0.6);
+    }
+
+    .click-btn:active {
+      transform: translateY(1px);
+    }
+
+    .counter {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #4a00e0;
+      font-size: 18px;
+    }
+
+    /* CSS Animasi Emoji Ayam */
+    .chicken-emoji {
+      position: fixed;
+      font-size: 40px;
+      pointer-events: none;
+      z-index: 999;
+      user-select: none;
+      animation: explode 3s ease-out forwards;
+    }
+
+    @keyframes explode {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(0.5) rotate(0deg);
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--tx), var(--ty)) scale(1.8) rotate(var(--rot));
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="box">
+    <h1>🎁 Dapatkan Hadiah Spesial!</h1>
+    <p>Klik tombol di bawah ini sebanyak 10 kali untuk membuka hadiah kamu!</p>
+    <button class="click-btn" id="giftBtn">KLAIM HADIAH</button>
+    <div class="counter" id="counterText">Sisa Klik: 10</div>
+  </div>
+
+  <!-- Audio Prank (Ganti 'suara-prank.mp3' dengan file lagu/audio kamu) -->
+  <audio id="prankSound" src="bekpanik.mp3" preload="auto"></audio>
+
+  <script>
+    let count = 10;
+    const btn = document.getElementById('giftBtn');
+    const counterText = document.getElementById('counterText');
+    const audio = document.getElementById('prankSound');
+    const box = document.getElementById('box');
+
+    btn.addEventListener('click', () => {
+      if (count > 1) {
+        count--;
+        counterText.textContent = `Sisa Klik: ${count}`;
+      } else if (count === 1) {
+        count--;
+        counterText.textContent = "🎉 SURPRISE! 🎉";
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+        btn.style.cursor = "not-allowed";
+
+        // 1. Putar Suara Prank
+        audio.play().catch(err => console.log("Audio gagal diputar otomatis:", err));
+
+        // 2. Efek Layar Memenuhi Layar dengan Ayam
+        spawnChickenExplosion();
+      }
+    });
+
+    function spawnChickenExplosion() {
+      const chickens = ['🐓', '🐔', '🐥', '🐣'];
+      const totalChickens = 120; // Jumlah ayam yang dimunculkan
+
+      for (let i = 0; i < totalChickens; i++) {
+        setTimeout(() => {
+          const chicken = document.createElement('div');
+          chicken.className = 'chicken-emoji';
+          
+          // Pilih emoji acak
+          chicken.textContent = chickens[Math.floor(Math.random() * chickens.length)];
+
+          // Posisikan di tengah layar sebagai awal
+          const startX = window.innerWidth / 2;
+          const startY = window.innerHeight / 2;
+
+          chicken.style.left = `${startX}px`;
+          chicken.style.top = `${startY}px`;
+
+          // Arah sebaran acak ke seluruh penjuru layar
+          const tx = (Math.random() - 0.5) * window.innerWidth * 1.5;
+          const ty = (Math.random() - 0.5) * window.innerHeight * 1.5;
+          const rot = (Math.random() - 0.5) * 720; // Putaran emoji
+
+          chicken.style.setProperty('--tx', `${tx}px`);
+          chicken.style.setProperty('--ty', `${ty}px`);
+          chicken.style.setProperty('--rot', `${rot}deg`);
+
+          document.body.appendChild(chicken);
+
+          // Hapus elemen setelah animasi selesai
+          setTimeout(() => {
+            chicken.remove();
+          }, 3000);
+        }, i * 25); // Muncul bertahap dengan jeda tipis
+      }
+    }
+  </script>
+</body>
+</html>
